@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Presence for WooCommerce Orders
- * Description: Warns you when a WooCommerce order changes while you have it open, using the Presence API's public functions.
+ * Description: Shows who else has a WooCommerce order open, and warns you when it changes, using the Presence API's public functions.
  * Requires Plugins: presence-api, woocommerce
  * Text Domain: presence-woo-orders
  *
@@ -20,9 +20,12 @@ add_action(
 		}
 
 		require_once __DIR__ . '/screen-key.php';
+		require_once __DIR__ . '/order-room.php';
 
 		add_filter( 'wp_presence_current_screen_key', 'wp_presence_woo_orders_current_screen_key', 10, 2 );
 		add_action( 'woocommerce_update_order', 'wp_presence_woo_orders_on_update_order' );
+		add_action( 'admin_enqueue_scripts', 'wp_presence_woo_orders_enqueue_order_room' );
+		add_filter( 'heartbeat_received', 'wp_presence_woo_orders_heartbeat_received', 10, 2 );
 	}
 );
 

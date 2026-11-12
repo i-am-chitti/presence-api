@@ -33,7 +33,10 @@ module.exports = [
 
 	{
 		// Admin scripts load as classic scripts and talk to jQuery and wp.
-		files: [ 'plugins/presence-api/assets/js/**/*.js' ],
+		files: [
+			'plugins/presence-api/assets/js/**/*.js',
+			'plugins/presence-woo-orders/**/*.js',
+		],
 		languageOptions: {
 			sourceType: 'script',
 			globals: {

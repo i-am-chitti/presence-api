@@ -44,6 +44,52 @@ function wpCli( command ) {
 		.trim();
 }
 
+/**
+ * Creates an order and returns its ID.
+ *
+ * @return {string} The order ID.
+ */
+function createOrder() {
+	return wpCli(
+		`eval '$order = wc_create_order(); $order->save(); echo $order->get_id();'`
+	);
+}
+
+/**
+ * Opens an order's edit screen and waits for Heartbeat.
+ *
+ * @param {import('@playwright/test').Page} page    The page.
+ * @param {string}                          orderId The order ID.
+ */
+async function openOrder( page, orderId ) {
+	await page.goto(
+		`/wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
+	);
+	await page.waitForFunction(
+		() =>
+			typeof wp !== 'undefined' && wp.heartbeat && wp.heartbeat.connectNow
+	);
+}
+
+/**
+ * Logs the shop manager in, in a browser context of their own.
+ *
+ * @param {import('@playwright/test').Browser} browser The browser.
+ * @return {Promise<import('@playwright/test').BrowserContext>} The shop manager's context.
+ */
+async function logInManager( browser ) {
+	const context = await browser.newContext( {
+		storageState: { cookies: [], origins: [] },
+	} );
+	const page = await context.newPage();
+	await page.goto( '/wp-login.php' );
+	await page.locator( '#user_login' ).fill( MANAGER.username );
+	await page.locator( '#user_pass' ).fill( MANAGER.password );
+	await page.locator( '#wp-submit' ).click();
+	await page.waitForURL( /wp-admin/ );
+	return context;
+}
+
 test.describe( 'Presence for WooCommerce Orders', () => {
 	test.beforeAll( () => {
 		wpCli(
@@ -69,35 +115,20 @@ test.describe( 'Presence for WooCommerce Orders', () => {
 			`db query "DELETE FROM wp_posts WHERE post_type LIKE 'shop_order%'"`
 		);
 		wpCli( 'option delete wp_presence_screen_revisions' );
+		wpCli(
+			`db query "DELETE FROM wp_presence WHERE room LIKE 'wc/order:%'"`
+		);
 	} );
 
 	test( 'warns an open HPOS order when a shop manager changes its status from the Orders list', async ( {
 		page,
 		browser,
 	} ) => {
-		const orderId = wpCli(
-			`eval '$order = wc_create_order(); $order->save(); echo $order->get_id();'`
-		);
+		const orderId = createOrder();
+		await openOrder( page, orderId );
 
-		await page.goto(
-			`/wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
-		);
-		await page.waitForFunction(
-			() =>
-				typeof wp !== 'undefined' &&
-				wp.heartbeat &&
-				wp.heartbeat.connectNow
-		);
-
-		const managerContext = await browser.newContext( {
-			storageState: { cookies: [], origins: [] },
-		} );
-		const manager = await managerContext.newPage();
-		await manager.goto( '/wp-login.php' );
-		await manager.fill( '#user_login', MANAGER.username );
-		await manager.fill( '#user_pass', MANAGER.password );
-		await manager.click( '#wp-submit' );
-		await manager.waitForURL( /wp-admin/ );
+		const managerContext = await logInManager( browser );
+		const manager = managerContext.pages()[ 0 ];
 
 		// The row's Processing button, which marks the order through admin-ajax.
 		await manager.goto( '/wp-admin/admin.php?page=wc-orders' );
@@ -114,5 +145,36 @@ test.describe( 'Presence for WooCommerce Orders', () => {
 			),
 			page.evaluate( () => wp.heartbeat.connectNow() ),
 		] );
+	} );
+
+	test( 'shows each person on an order who else has it open', async ( {
+		page,
+		browser,
+	} ) => {
+		const orderId = createOrder();
+		await openOrder( page, orderId );
+		await page.evaluate( () => wp.heartbeat.connectNow() );
+
+		const managerContext = await logInManager( browser );
+		const manager = managerContext.pages()[ 0 ];
+		await openOrder( manager, orderId );
+
+		const viewers = '.presence-woo-orders-viewers';
+		await Promise.all( [
+			expect( manager.locator( viewers ) ).toHaveText(
+				'Also on this order: admin',
+				{ timeout: 8000 }
+			),
+			manager.evaluate( () => wp.heartbeat.connectNow() ),
+		] );
+		await Promise.all( [
+			expect( page.locator( viewers ) ).toHaveText(
+				`Also on this order: ${ MANAGER.displayName }`,
+				{ timeout: 8000 }
+			),
+			page.evaluate( () => wp.heartbeat.connectNow() ),
+		] );
+
+		await managerContext.close();
 	} );
 } );

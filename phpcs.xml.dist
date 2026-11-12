@@ -78,11 +78,12 @@
 		<exclude-pattern>plugins/presence-api/tests/*</exclude-pattern>
 	</rule>
 
-	<!-- Meta capability mapped in wp_presence_map_meta_cap(). -->
+	<!-- Meta capability mapped in wp_presence_map_meta_cap(), and WooCommerce's for editing orders. -->
 	<rule ref="WordPress.WP.Capabilities">
 		<properties>
 			<property name="custom_capabilities" type="array">
 				<element value="view_presence_location"/>
+				<element value="edit_shop_orders"/>
 			</property>
 		</properties>
 	</rule>
