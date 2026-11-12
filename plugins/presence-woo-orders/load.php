@@ -22,6 +22,7 @@ add_action(
 		require_once __DIR__ . '/screen-key.php';
 
 		add_filter( 'wp_presence_current_screen_key', 'wp_presence_woo_orders_current_screen_key', 10, 2 );
+		add_action( 'woocommerce_update_order', 'wp_presence_woo_orders_on_update_order' );
 	}
 );
 

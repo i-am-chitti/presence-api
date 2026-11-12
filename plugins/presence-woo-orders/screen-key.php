@@ -39,3 +39,28 @@ function wp_presence_woo_orders_current_screen_key( $key, $screen ) {
 
 	return $order_id ? wp_presence_woo_orders_screen_key( $order_id ) : $key;
 }
+
+/**
+ * Whether WooCommerce stores orders in its own tables (HPOS).
+ *
+ * @return bool True when HPOS is on.
+ */
+function wp_presence_woo_orders_hpos_enabled() {
+	return class_exists( \Automattic\WooCommerce\Utilities\OrderUtil::class ) && \Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled();
+}
+
+/**
+ * Marks an HPOS order's screen stale whenever the order saves, including refunds.
+ *
+ * Every save counts, not only ones from wp-admin, since a payment or the REST API can change an order someone has open.
+ *
+ * @param int $order_id Order ID.
+ */
+function wp_presence_woo_orders_on_update_order( $order_id ) {
+	// With HPOS off the order is a post, whose screen Presence API already marks stale.
+	if ( ! wp_presence_woo_orders_hpos_enabled() ) {
+		return;
+	}
+
+	wp_presence_bump_screen_revision( wp_presence_woo_orders_screen_key( $order_id ) );
+}
