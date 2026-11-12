@@ -21,7 +21,7 @@
 	"packages": {
 		".": {
 			"package-name": "presence-api",
-			"exclude-paths": [ "plugins/presence-scenes", "plugins/presence-debugger" ]
+			"exclude-paths": [ "plugins/presence-scenes", "plugins/presence-debugger", "plugins/presence-woo-orders" ]
 		}
 	}
 }

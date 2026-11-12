@@ -14,6 +14,7 @@
 	<file>plugins/presence-api/uninstall.php</file>
 	<file>plugins/presence-scenes/</file>
 	<file>plugins/presence-debugger/</file>
+	<file>plugins/presence-woo-orders/</file>
 
 	<!-- Exclude test and demo files from coding standards. -->
 	<exclude-pattern>plugins/presence-scenes/tests/</exclude-pattern>
@@ -95,6 +96,7 @@
 			<property name="text_domain" type="array">
 				<element value="presence-api"/>
 				<element value="presence-scenes"/>
+				<element value="presence-woo-orders"/>
 			</property>
 		</properties>
 	</rule>

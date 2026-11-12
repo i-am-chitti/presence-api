@@ -8,10 +8,12 @@ parameters:
 		- plugins/presence-api/uninstall.php
 		- plugins/presence-scenes/
 		- plugins/presence-debugger/
+		- plugins/presence-woo-orders/
 	excludePaths:
 		- plugins/presence-scenes/tests/*
 		- plugins/presence-debugger/tests/*
 	scanFiles:
 		- vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
+		- vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php
 		- vendor/wp-cli/wp-cli/php/utils.php
 		- tests/e2e/demo-seeder.php
