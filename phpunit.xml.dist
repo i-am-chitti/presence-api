@@ -19,6 +19,9 @@
 		<testsuite name="presence-scenes">
 			<directory prefix="test-" suffix=".php">plugins/presence-scenes/</directory>
 		</testsuite>
+		<testsuite name="presence-woo-orders">
+			<directory prefix="test-" suffix=".php">plugins/presence-woo-orders/</directory>
+		</testsuite>
 		<testsuite name="presence-debugger">
 			<directory prefix="test-" suffix=".php">plugins/presence-debugger/</directory>
 		</testsuite>
@@ -27,6 +30,7 @@
 		<include>
 			<directory suffix=".php">plugins/presence-api/includes/</directory>
 			<directory suffix=".php">plugins/presence-scenes/</directory>
+			<directory suffix=".php">plugins/presence-woo-orders/</directory>
 		</include>
 		<exclude>
 			<!-- Only register hooks, and run during bootstrap before coverage starts. -->
@@ -35,6 +39,8 @@
 			<file>plugins/presence-scenes/load.php</file>
 			<file>plugins/presence-scenes/uninstall.php</file>
 			<directory>plugins/presence-scenes/tests/</directory>
+			<file>plugins/presence-woo-orders/load.php</file>
+			<directory>plugins/presence-woo-orders/tests/</directory>
 		</exclude>
 	</coverage>
 </phpunit>

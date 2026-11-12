@@ -19,6 +19,7 @@
 	<!-- Exclude test and demo files from coding standards. -->
 	<exclude-pattern>plugins/presence-scenes/tests/</exclude-pattern>
 	<exclude-pattern>plugins/presence-debugger/tests/</exclude-pattern>
+	<exclude-pattern>plugins/presence-woo-orders/tests/</exclude-pattern>
 	<exclude-pattern>plugins/presence-api/tests/stubs/</exclude-pattern>
 	<exclude-pattern>^tests/</exclude-pattern>
 	<exclude-pattern>vendor/</exclude-pattern>

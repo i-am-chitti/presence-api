@@ -28,6 +28,7 @@ function _manually_load_plugin() {
 	require dirname( __DIR__ ) . '/presence-api.php';
 	require dirname( __DIR__, 2 ) . '/presence-debugger/load.php';
 	require dirname( __DIR__, 2 ) . '/presence-scenes/load.php';
+	require dirname( __DIR__, 2 ) . '/presence-woo-orders/load.php';
 }
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 
