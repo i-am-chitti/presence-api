@@ -57,6 +57,8 @@ No install needed: launch a scratch site straight from `main`.
 
 Presence Scenes plays a [scene](plugins/presence-scenes/README.md) on the Posts screen.
 
+[Presence for WooCommerce Orders](plugins/presence-woo-orders/README.md), an example of a plugin built on the API, has [its own demo](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/WordPress/presence-api/main/blueprint-woo-orders.json).
+
 ## Data flow
 
 1. Browser sends `presence-ping` via Heartbeat
