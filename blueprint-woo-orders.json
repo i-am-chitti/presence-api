@@ -1,0 +1,55 @@
+{
+	"preferredVersions": {
+		"php": "8.3",
+		"wp": "latest"
+	},
+	"landingPage": "/wp-admin/?presence_demo=order",
+	"login": true,
+	"steps": [
+		{
+			"step": "defineWpConfigConsts",
+			"consts": {
+				"WP_DEBUG": true
+			}
+		},
+		{
+			"step": "installPlugin",
+			"pluginData": {
+				"resource": "url",
+				"url": "https://raw.githubusercontent.com/WordPress/presence-api/preview-main/presence-api.zip"
+			}
+		},
+		{
+			"step": "installPlugin",
+			"pluginData": {
+				"resource": "wordpress.org/plugins",
+				"slug": "woocommerce"
+			}
+		},
+		{
+			"step": "installPlugin",
+			"pluginData": {
+				"resource": "git:directory",
+				"url": "https://github.com/WordPress/presence-api",
+				"ref": "main",
+				"path": "plugins/presence-woo-orders"
+			}
+		},
+		{
+			"step": "writeFile",
+			"path": "/wordpress/wp-content/mu-plugins/woo-orders-demo-helper.php",
+			"data": {
+				"resource": "url",
+				"url": "https://raw.githubusercontent.com/WordPress/presence-api/main/tests/e2e/woo-orders-demo-helper.php"
+			}
+		},
+		{
+			"step": "wp-cli",
+			"command": "wp wc hpos enable"
+		},
+		{
+			"step": "runPHP",
+			"code": "<?php require '/wordpress/wp-load.php'; delete_transient( '_wc_activation_redirect' ); update_option( 'woocommerce_onboarding_profile', array( 'skipped' => true ) ); update_option( 'avatar_default', 'identicon' ); presence_demo_woo_orders_seed(); ?>"
+		}
+	]
+}
